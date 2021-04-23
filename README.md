@@ -5,7 +5,13 @@ This project lets you convert relational data stored in MySQL to JSON documents.
 # Configuration
 
 Open `./docker-compose.yml` and specify the MySQL server connection details and database.
-
+`
+      - MYSQL_SERVER=localhost
+      - MYSQL_PORT=3306
+      - MYSQL_USER=myuser
+      - MYSQL_PASS=mypassword
+      - MYSQL_DB=forum
+`
 ## Running
 
 This project requires docker/docker-compose installed.
