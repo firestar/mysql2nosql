@@ -12,7 +12,7 @@ This project requires docker/docker-compose installed.
 
 To start up the process and start converting run the following command. `docker-compose up`
 
-When it finishes building and starting up you can access it in the browser at `http://localhost:8080/`
+Wait until it finishes building and starting up. You can access the UI in the browser at `http://localhost:8080/`
 
 ## Previews
 
