@@ -1,0 +1,23 @@
+version: "3.9"  # optional since v1.27.0
+services:
+  backend:
+    build: ./backend/
+    environment:
+      - MYSQL_SERVER=localhost
+      - MYSQL_PORT=3306
+      - MYSQL_USER=blank
+      - MYSQL_PASS=blank
+      - MYSQL_DB=blank
+  frontend:
+    build: ./frontend/
+  nginx:
+    image: nginx
+    links:
+      - frontend
+      - backend
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./logs/:/logs/:rw
+    command: [nginx-debug, '-g', 'daemon off;']
