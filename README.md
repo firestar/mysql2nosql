@@ -1,6 +1,6 @@
 # MySQL 2 NoSQL
 
-This project lets you convert relational data stored in MySQL to JSON documents. You can specify table relations and one to one or one to many relations between tables. This 
+This project lets you convert relational data stored in MySQL to JSON documents. You can specify table relations and one to one or one to many relations between tables. The objects are saved to the browsers localStorage. 
 
 # Configuration
 
