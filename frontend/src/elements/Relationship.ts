@@ -45,4 +45,7 @@ export class ObjectRelationship implements RelationshipInterface{
     @JsonProperty() @JsonClassType({type: () => [Boolean]})
     multiple: boolean = true;
 
+    @JsonProperty() @JsonClassType({type: () => [Number]})
+    depth: number = 2;
+
 }

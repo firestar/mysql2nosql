@@ -73,7 +73,7 @@ class App extends React.Component<Prop, State> {
             });
         }
         this.state = {objects: savedObjectsArray, tables: [], mainTable: "", objectName: "", buildSQLTarget:""};
-        fetch("/tables").then(body => body.json()).then(tableData => this.setState({tables: tableData.tables}));
+        fetch(this.getURL()+"/tables").then(body => body.json()).then(tableData => this.setState({tables: tableData.tables}));
     }
 
     saveObjectToStorage(){
@@ -88,10 +88,15 @@ class App extends React.Component<Prop, State> {
             this.setState({objects: objects}, ()=>this.saveObjectToStorage());
         }
     }
+
     saveNewObject(object: TableObject){
         let objects: TableObject[] = this.state.objects;
         objects.push(object);
         this.setState({objects: objects}, ()=>this.saveObjectToStorage());
+    }
+
+    getURL():string {
+        return ""
     }
 
     buildSQLPage(target: string){
@@ -120,9 +125,9 @@ class App extends React.Component<Prop, State> {
         let objects = this.state.objects;
         objects = objects.filter((x, y)=>y!==idx);
         localStorage.removeItem(object.key);
-        objects.forEach(obj=>{
-            obj.objects = obj.objects.filter(objRel=>objRel.key!==object.key);
-        });
+        for(let x=0;objects.length;x++){
+            objects[x].objects = objects[x].objects.filter(objRel=>objRel.key!==object.key);
+        };
         this.setState({objects: objects}, ()=>this.saveObjectToStorage());
     }
 
@@ -131,7 +136,7 @@ class App extends React.Component<Prop, State> {
         const mainTable:string = this.state.mainTable;
         if(objectName.length>0 && mainTable.length>0) {
             this.setState({mainTable: "", objectName: ""});
-            fetch("/table/" + mainTable).then(tableInfo => tableInfo.json()).then(tableInfo => {
+            fetch(this.getURL()+"/table/" + mainTable).then(tableInfo => tableInfo.json()).then(tableInfo => {
                 let object: TableObject = new TableObject([], uuidv4(), new TableData(tableInfo.columns, tableInfo.tableStatus), objectName, new Map<string, any>());
                 this.saveNewObject(object);
             });

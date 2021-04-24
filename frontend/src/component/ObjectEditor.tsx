@@ -196,6 +196,11 @@ export class ObjectEditor extends React.Component<Props, State>{
         object.objects[idx].multiple = !object.objects[idx].multiple;
         this.setState({object: object},()=>this.save());
     }
+    changeRelationshipDepthChange(idx: number, depth:number){
+        let object = this.state.object;
+        object.objects[idx].depth = depth;
+        this.setState({object: object},()=>this.save());
+    }
     deleteRelationship(idx: number){
         let object = this.state.object;
         object.objects = object.objects.filter((obj, x)=>x!==idx);
@@ -220,11 +225,25 @@ export class ObjectEditor extends React.Component<Props, State>{
                     {(expanded)?[
                         <Box>
                             <Box style={{textAlign:"left", marginRight:"10px"}}>
-                                <TextField value={objectRelationship.projection} onChange={(e)=>{
-                                    let object = this.state.object;
-                                    object.objects[idx].projection = e.target.value;
-                                    this.setState({object: object}, ()=>this.save());
-                                }} label={"Projection"}/><br/>
+                                <p>
+                                    <TextField value={objectRelationship.projection} onChange={(e)=>{
+                                        let object = this.state.object;
+                                        object.objects[idx].projection = e.target.value;
+                                        this.setState({object: object}, ()=>this.save());
+                                    }} label={"Projection"}/>
+                                </p>
+                                <p>
+                                    <TextField
+                                        id="filled-number"
+                                        label="Max Depth"
+                                        type="number"
+                                        onChange={(e)=>this.changeRelationshipDepthChange(idx, parseInt(e.target.value))}
+                                        value={objectRelationship.depth}
+                                        InputLabelProps={{
+                                            shrink: true,
+                                        }}
+                                    />
+                                </p>
                                 <FormControlLabel
                                     value="end"
                                     control={<Checkbox onChange={()=>this.changeRelationshipMultipleChange(idx)} checked={objectRelationship.multiple} color="primary" />}
@@ -361,7 +380,7 @@ export class ObjectEditor extends React.Component<Props, State>{
         {
             let name: string = this.state.relatedTable;
             this.setState({relatedTable: ""},()=>{
-                fetch("/table/" + name).then(tableInfo => tableInfo.json()).then(tableInfo => {
+                fetch(this.props.app.getURL()+"/table/" + name).then(tableInfo => tableInfo.json()).then(tableInfo => {
                     let object = this.state.object;
                     object.tables.push(new TableRelationship(tableInfo));
                     this.setState({object: object},()=>this.save());

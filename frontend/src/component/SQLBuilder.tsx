@@ -35,7 +35,8 @@ export class SQLBuilder extends React.Component<Props, State> {
             this.setState({target: this.props.target})
         }
     }
-    generateSQLInner(objectRelation: ObjectRelationship, tabs: number){
+    generateSQLInner(objectRelation: ObjectRelationship, tabs: number, depth: number){
+        depth--;
         let object: TableObject | undefined= this.props.app.getObject(objectRelation.target);
         if(object) {
             const obj: TableObject = object;
@@ -52,9 +53,15 @@ export class SQLBuilder extends React.Component<Props, State> {
             obj.projections.forEach((val, key)=>{
                 projectionsSQL.push(tabsStringProjection + "\t\t\t'"+val+"', `"+key.split(".").join("`.`")+"`");
             });
-            obj.objects.forEach(object=>{
-                projectionsSQL.push(tabsStringProjection+"\t\t\t'"+object.projection+"', "+this.generateSQLInner(object, tabs+((objectRelation.multiple)?4:3))+"");
-            });
+            if(depth>0) {
+                obj.objects.forEach(object => {
+                    let depthNew = depth;
+                    if(depthNew>object.depth){
+                        depthNew = object.depth;
+                    }
+                    projectionsSQL.push(tabsStringProjection + "\t\t\t'" + object.projection + "', " + this.generateSQLInner(object, tabs + ((objectRelation.multiple) ? 4 : 3), depthNew) + "");
+                });
+            }
             projectionsSQL.sort();
             SQL += projectionsSQL.join(",\n")+"\n";
             if(objectRelation.multiple) {
@@ -99,7 +106,7 @@ export class SQLBuilder extends React.Component<Props, State> {
             });
 
             obj.objects.forEach(object=>{
-                projectionsSQL.push("\t\t'"+object.projection+"', "+this.generateSQLInner(object, 2)+"");
+                projectionsSQL.push("\t\t'"+object.projection+"', "+this.generateSQLInner(object, 2, object.depth)+"");
             });
             projectionsSQL.sort();
             SQL += projectionsSQL.join(",\n")+"\n";
